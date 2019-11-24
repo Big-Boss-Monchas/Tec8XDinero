@@ -18,6 +18,7 @@
 float float_rand(float, float);
 void calculateVertex(void);
 bool collision(void);
+void calculateValue(void);
 
 Cube cubito(5, 5, 7, 5, 5);
 PrismRectangular mesita(0, 0, -2, 15, 15, 2);
@@ -29,6 +30,9 @@ float xmove = 0.0, ymove = 0.0, zmove = 0.0;
 float anglerandomaux = 7.0, anglerandom = 0.0;
 float moverandomaux = 5.0, moverandom = 0.0;
 bool start = true, end = false;
+int vertex = 0;
+int orden[8];
+int numDice = 0;
 
 void initializer(void) {
 	glClearColor(1.0, 1.0, 1.0, 0.0); // COLOR CANVAS
@@ -43,13 +47,13 @@ void idle_cb(int Value) {
 	roll = true;
 	
 	anglex += anglerandom;
-	//angley += anglerandom;
-	//anglez += anglerandom;
+	angley += anglerandom;
+	anglez += anglerandom;
 	if (anglex > 360)
 	{
 		anglex -= 360;
-		//angley -= 360;
-		//anglez -= 360;
+		angley -= 360;
+		anglez -= 360;
 	}
 	xmove -= moverandom;
 	ymove -= moverandom;
@@ -58,9 +62,9 @@ void idle_cb(int Value) {
 	glutPostRedisplay();
 	if (collision())
 	{
+		calculateVertex();
 		roll = false;
 		glutTimerFunc(1000, NULL, 0);
-
 		end = true;
 		return;
 	}
@@ -80,12 +84,13 @@ bool collision() {
 
 void calculateVertex(void) {
 	Vertex3d aux_pos[8];
+	int contador = 0;
 	Vertex3d temp;
 	for (size_t i = 0; i < 8; i++)
 	{
 		aux_pos[i] = cubito.getVertexPos(i);
 	}
-	/*for (size_t i = 0; i < 8; i++)
+	for (size_t i = 0; i < 8; i++)
 	{
 		for (size_t j = i+1; j < 8; j++)
 		{
@@ -96,11 +101,185 @@ void calculateVertex(void) {
 				aux_pos[j] = temp;
 			}
 		}
-	}*/
+	}
 	for (size_t i = 0; i < 8; i++)
 	{
-		std::cout << "lower vertex " << aux_pos[i].getZ() << std::endl;
+		for (size_t j = 0; j < 8; j++)
+		{
+			if (aux_pos[i].getZ() == cubito.getVertexPos(j).getZ())
+			{
+				orden[contador] = j;
+				contador++;
+			}
+		}
+		
+	}
+	calculateValue();
+	for (size_t i = 0; i < 8; i++)
+	{
+		std::cout << "lower vertex " << aux_pos[i].getZ() << "\t" << orden[i] << std::endl;
 
+	}
+	std::cout << "numer " << numDice << std::endl;
+}
+
+void calculateValue() {
+	switch (orden[0])
+	{
+	case 0:
+		switch (orden[1])
+		{
+		case 1:
+			if (orden[2] == 3)	{ numDice = 5;}
+			else if(orden[2] == 4)	{ numDice = 4;}
+			break;
+		case 3:
+			if (orden[2] == 1) { numDice = 5; }
+			else if (orden[2] == 4) { numDice = 6; }
+			break;
+		case 4:
+			if (orden[2] == 1) { numDice = 4; }
+			else if (orden[2] == 3) { numDice = 6; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 1:
+		switch (orden[1])
+		{
+		case 0:
+			if (orden[2] == 2) { numDice = 5; }
+			else if (orden[2] == 5) { numDice = 4; }
+			break;
+		case 2:
+			if (orden[2] == 0) { numDice = 5; }
+			else if (orden[2] == 5) { numDice = 3; }
+			break;
+		case 5:
+			if (orden[2] == 0) { numDice = 4; }
+			else if (orden[2] == 2) { numDice = 3; }
+			break;
+		default:
+		break;
+	}
+		break;
+	case 2:
+		switch (orden[1])
+		{
+		case 1:
+			if (orden[2] == 3) { numDice = 5; }
+			else if (orden[2] == 6) { numDice = 3; }
+			break;
+		case 3:
+			if (orden[2] == 1) { numDice = 5; }
+			else if (orden[2] == 6) { numDice = 2; }
+			break;
+		case 6:
+			if (orden[2] == 1) { numDice = 3; }
+			else if (orden[2] == 3) { numDice = 2; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 3:
+		switch (orden[1])
+		{
+		case 0:
+			if (orden[2] == 2) { numDice = 5; }
+			else if (orden[2] == 7) { numDice = 6; }
+			break;
+		case 2:
+			if (orden[2] == 0) { numDice = 5; }
+			else if (orden[2] == 7) { numDice = 2; }
+			break;
+		case 7:
+			if (orden[2] == 0) { numDice = 6; }
+			else if (orden[2] == 2) { numDice = 2; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 4:
+		switch (orden[1])
+		{
+		case 0:
+			if (orden[2] == 5) { numDice = 4; }
+			else if (orden[2] == 7) { numDice = 6; }
+			break;
+		case 5:
+			if (orden[2] == 0) { numDice = 4; }
+			else if (orden[2] == 7) { numDice = 1; }
+			break;
+		case 7:
+			if (orden[2] == 0) { numDice = 6; }
+			else if (orden[2] == 5) { numDice = 1; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 5:
+		switch (orden[1])
+		{
+		case 1:
+			if (orden[2] == 4) { numDice = 4; }
+			else if (orden[2] == 6) { numDice = 3; }
+			break;
+		case 4:
+			if (orden[2] == 1) { numDice = 4; }
+			else if (orden[2] == 6) { numDice = 1; }
+			break;
+		case 6:
+			if (orden[2] == 1) { numDice = 3; }
+			else if (orden[2] == 4) { numDice = 1; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 6:
+		switch (orden[1])
+		{
+		case 2:
+			if (orden[2] == 5) { numDice = 3; }
+			else if (orden[2] == 7) { numDice = 2; }
+			break;
+		case 5:
+			if (orden[2] == 2) { numDice = 3; }
+			else if (orden[2] == 7) { numDice = 1; }
+			break;
+		case 7:
+			if (orden[2] == 2) { numDice = 1; }
+			else if (orden[2] == 5) { numDice = 1; }
+			break;
+		default:
+			break;
+		}
+		break;
+	case 7:
+		switch (orden[1])
+		{
+		case 3:
+			if (orden[2] == 4) { numDice = 6; }
+			else if (orden[2] == 6) { numDice = 2; }
+			break;
+		case 4:
+			if (orden[2] == 3) { numDice = 6; }
+			else if (orden[2] == 6) { numDice = 1; }
+			break;
+		case 6:
+			if (orden[2] == 3) { numDice = 2; }
+			else if (orden[2] == 4) { numDice = 1; }
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -127,8 +306,8 @@ void displayScreen(void) {
 		//glRotatef(angley, 0.0, 1.0, 0.0);
 		//glRotatef(anglez, 0.0, 0.0, 1.0);
 		cubito.rotateFigureX(anglex);
-		//cubito.rotateFigureY(angley);
-		//cubito.rotateFigureZ(anglez);
+		cubito.rotateFigureY(angley);
+		cubito.rotateFigureZ(anglez);
 		//glTranslatef(-x1, -y1, -z1);
 		//glTranslatef(xmove, ymove, zmove);
 		cubito.setOrigin(x1 - moverandom, y1- moverandom, z1 - moverandom);
@@ -186,7 +365,8 @@ void teclado_cb(GLubyte key, GLint x, GLint y) {
 		}
 		anglerandom = 5.0;
 		//anglerandom = (((float) rand() / (RAND_MAX)) + 1.0) * float_rand(3.0,7.0);
-		moverandom = .3;
+		//moverandom = .05;
+		moverandom = ((((float)rand() / (RAND_MAX)) + 1.0) / float_rand(1.0, 5.0));
 		moverandomaux = moverandom * (-1);
 		//moverandom = ((((float)rand() / (RAND_MAX)) + 1.0) / 15.0);
 		glutTimerFunc(1000, idle_cb, 0);

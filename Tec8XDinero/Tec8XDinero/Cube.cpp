@@ -389,8 +389,10 @@ void Cube::rotateFigureY(double _angle)
 	{
 		Vertex3d aux_vertex = getVertexPos(i);
 		double tempz = aux_vertex.getZ();
-		setVertexposZ(tempz * cos(_angle) - aux_vertex.getX() * sin(_angle), i);
-		setVertexposY(tempz * sin(_angle) + aux_vertex.getX() * cos(_angle), i);
+		double pivotz = getOrigin().getZ();
+		double pivotx = getOrigin().getX();
+		setVertexposZ(pivotz + (tempz - pivotz) * cos(_angle) - (aux_vertex.getX() - pivotx) * sin(_angle), i);
+		setVertexposX(pivotx + (tempz - pivotz) * sin(_angle) + (aux_vertex.getX() - pivotx) * cos(_angle), i);
 	}
 }
 
@@ -401,8 +403,10 @@ void Cube::rotateFigureZ(double _angle)
 	{
 		Vertex3d aux_vertex = getVertexPos(i);
 		double tempx = aux_vertex.getX();
-		setVertexposX(tempx * cos(_angle) - aux_vertex.getY() * sin(_angle), i);
-		setVertexposY(tempx * sin(_angle) + aux_vertex.getY() * cos(_angle), i);
+		double pivotx = getOrigin().getX();
+		double pivoty = getOrigin().getY();
+		setVertexposX(pivotx + (tempx - pivotx) * cos(_angle) - (aux_vertex.getY() - pivoty) * sin(_angle), i);
+		setVertexposY(pivoty + (tempx - pivotx) * sin(_angle) + (aux_vertex.getY() - pivoty) * cos(_angle), i);
 	}
 
 }
